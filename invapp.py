@@ -19,7 +19,7 @@ def data_download():
     return raw_data
     
 def execute_pipeline():
-    raw_data_df = data_download
+    raw_data_df = data_download()
     daily_returns = raw_data_df.pct_change().dropna()
     
     # Interactive Sliders 
