@@ -1,0 +1,7 @@
+*.ipynb
+/.virtual_documents
+/.ipynb_checkpoints
+*.py
+!invapp.py
+!scripts/*.py
+

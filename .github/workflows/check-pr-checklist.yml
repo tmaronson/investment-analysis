@@ -1,0 +1,45 @@
+name: "Verify PR Checklist Rules"
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  validate-pr-body:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Categories
+        shell: bash
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "Analyzing Pull Request description structure..."
+
+          # 1. Isolate the "Type of Change" section text
+          TYPE_OF_CHANGE_TEXT=$(echo "$PR_BODY" | sed -n '/## Type of Change/,/## Checklist/p')
+          
+          # Count how many boxes are marked checked [x] or [X] in this section
+          CHECKED_TYPES=$(echo "$TYPE_OF_CHANGE_TEXT" | grep -cE '\-\s+\[[xX]\]' || true)
+          
+          echo "Found $CHECKED_TYPES checked box(es) in Type of Change."
+          if [ "$CHECKED_TYPES" -lt 1 ]; then
+            echo "❌ Error: You must select at least one Type of Change (Bug fix, New feature, etc.)."
+            exit 1
+          fi
+
+          # 2. Isolate the "Checklist" section text to the end of the body
+          CHECKLIST_TEXT=$(echo "$PR_BODY" | sed -n '/## Checklist/,$p')
+          
+          # Count how many total empty boxes [ ] remain in this section
+          EMPTY_CHECKLISTS=$(echo "$CHECKLIST_TEXT" | grep -cE '\-\s+\[\s+\]' || true)
+          
+          echo "Found $EMPTY_CHECKLISTS empty box(es) remaining in the Checklist section."
+          if [ "$EMPTY_CHECKLISTS" -gt 0 ]; then
+            echo "❌ Error: All 5 items in the core Checklist must be completed before merging."
+            exit 1
+          fi
+
+          echo "🚀 Success: All PR template constraints satisfied!"
