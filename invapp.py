@@ -46,7 +46,7 @@ def execute_pipeline():
     # Render Charts st.pyplot(plot_fan_chart(years_arr, gross_paths, net_paths, fee_bps)) st.pyplot(plot_histogram(gross_paths[-1], net_paths[-1], fee_bps)) 
     
     # Monte Carlo simulation
-    years, gross_paths, net_paths = monte_carlo_sim(ann_returns, ann_volatility, n_sims)
+    years, gross_paths, net_paths = monte_carlo_sim(ann_returns, ann_volatility,fee_bps, n_sims)
     # Plot fan chart in Streamlit.
     fig = plot_fandown_chart(years, gross_paths, net_paths, fee_bps)
     st.pyplot(fig)
@@ -54,18 +54,15 @@ def execute_pipeline():
     fig = plot_histogram(gross_paths[-1], net_paths[-1], fee_bps)
     st.pyplot(fig)
 
-def monte_carlo_sim(ann_returns, ann_volatility, n_sims):
+def monte_carlo_sim(ann_returns, ann_volatility, fee_bps, n_sims):
     # Monte Carlo simulation parameters 
      
     years = 20 
     init_val = 1000000 
-    mu_gross = 0.098071 
-    mu_net = mu_gross - 0.0060 # 60 bps annual fee drag 
-    sigma = 0.144087 
     np.random.seed(42) 
     # Simulate annual returns across 10,000 paths 
     gross_returns = np.random.normal(ann_returns, ann_volatility, (years, n_sims)) 
-    net_returns = np.random.normal(mu_net, sigma, (years, n_sims)) 
+    net_returns = np.random.normal(ann_returns - (fee_bps/10000) , ann_volatility, (years, n_sims)) 
     # Calculate cumulative compounding paths 
     gross_paths = init_val * np.vstack([np.ones(n_sims), np.cumprod(1 + gross_returns, axis=0)]) 
     net_paths = init_val * np.vstack([np.ones(n_sims), np.cumprod(1 + net_returns, axis=0)])
