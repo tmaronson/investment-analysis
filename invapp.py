@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt 
 import seaborn as sns
+import streamlit as st
 
 def execute_pipeline():
     # Compute annualized parameters (252 trading days) 
@@ -20,12 +21,16 @@ def execute_pipeline():
     # 2. Compute the blended 73/27 benchmark daily return series
     daily_returns["Blended_73_27"] = (0.73 * daily_returns["SPY"]) + (0.27 * daily_returns["BND"]) 
     print(daily_returns.tail())
+    st.write(daily_returns.tail())
     ann_returns = daily_returns.mean() * 252 
     ann_volatility = daily_returns.std() * np.sqrt(252) 
     correlation = daily_returns["SPY"].corr(daily_returns["BND"]) 
     print("Annualized Returns:\n", ann_returns) 
     print("\nAnnualized Volatility:\n", ann_volatility) 
     print(f"\nStock/Bond Correlation: {correlation:.3f}")
+    st.write("Annualized Returns:\n", ann_returns) 
+    st.write("\nAnnualized Volatility:\n", ann_volatility) 
+    st.write(f"\nStock/Bond Correlation: {correlation:.3f}")
     years, gross_paths, net_paths = monte_carlo_sim()
     plot_fandown_charts(years, gross_paths, net_paths)
     plot_histogram(gross_paths, net_paths)
@@ -49,6 +54,9 @@ def monte_carlo_sim():
     print(f"Median Gross Terminal Wealth (20 yrs): ${np.median(gross_paths[-1]):,.0f}") 
     print(f"Median Net Terminal Wealth (20 yrs): ${np.median(net_paths[-1]):,.0f}") 
     print(f"Median Fee Cost Friction: ${np.median(gross_paths[-1]) - np.median(net_paths[-1]):,.0f}")
+    st.write(f"Median Gross Terminal Wealth (20 yrs): ${np.median(gross_paths[-1]):,.0f}") 
+    st.write(f"Median Net Terminal Wealth (20 yrs): ${np.median(net_paths[-1]):,.0f}") 
+    st.write(f"Median Fee Cost Friction: ${np.median(gross_paths[-1]) - np.median(net_paths[-1]):,.0f}")
     return years, gross_paths, net_paths
     
 def plot_fandown_charts(years=20, gross_paths=10000, net_paths=10000):
@@ -102,8 +110,8 @@ def plot_histogram(gross_paths=10000, net_paths=10000):
     # 3. Calculate probability of shortfall
     shortfall_pct = np.mean(net_terminal < np.median(gross_terminal)) * 100 
     print(f"Percentage of net outcomes falling below gross benchmark median: {shortfall_pct:.1f}%")
-    
-    
+    st.write(f"Percentage of net outcomes falling below gross benchmark median: {shortfall_pct:.1f}%")
+      
     
 
 
