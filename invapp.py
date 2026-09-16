@@ -28,7 +28,10 @@ def execute_pipeline():
     n_sims = st.sidebar.slider("Number of Simulations", min_value=1000, max_value=25000, value=10000, step=1000) 
     
     # 2. Compute the blended benchmark daily return series
-    frac_equity = equity_pct/100
+    frac_equity = equity_pct / 100 
+    blended_series = (frac_equity * daily_returns["SPY"]) + ((1.0 - frac_equity) * daily_returns["BND"]) 
+    mu_gross = float(blended_series.mean() * 252) 
+    sigma = float(blended_series.std() * np.sqrt(252))
     daily_returns[f"Blended_{frac_equity}_{1 - frac_equity}"] = (frac_equity * daily_returns["SPY"]) + ((1.0 - frac_equity) * daily_returns["BND"]) 
     print(daily_returns.tail())
     st.write(daily_returns.tail())
@@ -46,7 +49,7 @@ def execute_pipeline():
     # Render Charts st.pyplot(plot_fan_chart(years_arr, gross_paths, net_paths, fee_bps)) st.pyplot(plot_histogram(gross_paths[-1], net_paths[-1], fee_bps)) 
     
     # Monte Carlo simulation
-    years, gross_paths, net_paths = monte_carlo_sim(ann_returns, ann_volatility,fee_bps, n_sims)
+    years, gross_paths, net_paths = monte_carlo_sim(mu_gross, sigma, fee_bps, n_sims)
     # Plot fan chart in Streamlit.
     fig = plot_fandown_chart(years, gross_paths, net_paths, fee_bps)
     st.pyplot(fig)
@@ -54,15 +57,15 @@ def execute_pipeline():
     fig = plot_histogram(gross_paths[-1], net_paths[-1], fee_bps)
     st.pyplot(fig)
 
-def monte_carlo_sim(ann_returns, ann_volatility, fee_bps, n_sims):
+def monte_carlo_sim(mu_gross, sigma, fee_bps, n_sims):
     # Monte Carlo simulation parameters 
      
     years = 20 
     init_val = 1000000 
     np.random.seed(42) 
     # Simulate annual returns across 10,000 paths 
-    gross_returns = np.random.normal(ann_returns, ann_volatility, (years, n_sims)) 
-    net_returns = np.random.normal(ann_returns - (fee_bps/10000) , ann_volatility, (years, n_sims)) 
+    gross_returns = np.random.normal(mu_gross, sigma, (years, n_sims)) 
+    net_returns = np.random.normal(mu_gross - (fee_bps/10000) , sigma, (years, n_sims)) 
     # Calculate cumulative compounding paths 
     gross_paths = init_val * np.vstack([np.ones(n_sims), np.cumprod(1 + gross_returns, axis=0)]) 
     net_paths = init_val * np.vstack([np.ones(n_sims), np.cumprod(1 + net_returns, axis=0)])
@@ -72,7 +75,8 @@ def monte_carlo_sim(ann_returns, ann_volatility, fee_bps, n_sims):
     st.write(f"Median Gross Terminal Wealth (20 yrs): ${np.median(gross_paths[-1]):,.0f}") 
     st.write(f"Median Net Terminal Wealth (20 yrs): ${np.median(net_paths[-1]):,.0f}") 
     st.write(f"Median Fee Cost Friction: ${np.median(gross_paths[-1]) - np.median(net_paths[-1]):,.0f}")
-    return years, gross_paths, net_paths
+    years_arr = np.arange(years + 1)
+    return years_arr, gross_paths, net_paths
     
 def plot_fandown_chart(years_arr, gross_paths, net_paths, fee_bps):
     fig, ax = plt.subplots(figsize=(11, 5.5)) 
