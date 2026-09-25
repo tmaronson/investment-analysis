@@ -1,0 +1,10 @@
+[tool.pylint.messages_control]
+# Disable specific rules by their symbolic name or code
+disable = [
+    "trailing-whitespace",       # C0303: Trailing whitespace
+    #"missing-docstring",         # C0114, C0115, C0116: Missing module/class/method docstring
+    "line-too-long",             # C0301: Line too long
+    "invalid-name",              # C0103: Invalid constant/variable name style
+	"too-many-locals"
+]
+
