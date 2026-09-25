@@ -1,0 +1,102 @@
+/* style.css */ 
+
+.legend-label {
+  font-size: 18px;
+}
+
+details summary p { 
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #1f2937; 
+}
+
+/* Keeps working font size on the div wrapper */
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] div { 
+    font-size: 26px !important; 
+}
+
+/* Forces everything inside that wrapper to inherit bold styling */
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] div * { 
+    font-weight: 600 !important; 
+}
+
+/* 1. Targets the Selectbox Main Header Title (e.g., "Select a State:") and outlier dropdown */
+[data-testid="stSidebar"] div[data-testid="stSelectbox"] label p {
+    font-size: 20px !important;
+}
+
+/* 2. Targets the Selectbox Input Field (e.g., "Select a State") and outlier dropdown*/
+div[data-testid="stSelectbox"] input {
+   font-size: 1.15rem !important; 
+} 
+
+/* 3. Targets the Selectbox Dropdown Options (e.g., "Alabama", "Alaska", etc.) and outlier dropdown */
+div[role="listbox"] div[role="option"] {
+   font-size: 1.15rem !important; 
+}
+
+/* Targets only the individual option strings inside the radio group */
+[data-testid="stSidebar"] div[role="radiogroup"] label p {
+    font-size: 20px !important;
+    font-weight: normal !important; 
+}
+
+/* Add icon legend to sidebar. */
+
+.legend-box { 
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 5px; 
+} 
+
+.legend-title {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+} 
+
+/* Base Table Styling */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.custom-table th {
+    text-align: center !important;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #f0f2f6;
+}
+
+.custom-table td {
+	text-align: center !important; 
+  font-size: 28px;
+}
+
+/* tab styling */
+[data-testid="stTab"] p {
+    font-size: 24px !important;
+}
+
+/* slider styling */
+.stSlider * {
+    font-size: 20px !important;
+    font-weight: 500;
+}
+
+/* Regular line styling like calculation display. */
+.calculation-highlight {
+    font-size: 20px !important; /* Adjust size to your preference */
+    font-weight: 600;           /* Gives it a clean, bold weight */
+    color: #1e293b;             /* Sleek slate/dark charcoal color */
+}
