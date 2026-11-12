@@ -85,7 +85,7 @@ div[role="listbox"] div[role="option"] {
 
 /* tab styling */
 [data-testid="stTab"] p {
-    font-size: 24px !important;
+    font-size: 19px !important;
 }
 
 /* slider styling */
@@ -96,7 +96,7 @@ div[role="listbox"] div[role="option"] {
 
 /* Regular line styling like calculation display. */
 .calculation-highlight {
-    font-size: 20px !important; /* Adjust size to your preference */
+    font-size: 20px !important; 
     font-weight: 600;           /* Gives it a clean, bold weight */
     color: #1e293b;             /* Sleek slate/dark charcoal color */
 }

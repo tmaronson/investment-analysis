@@ -4,4 +4,5 @@
 *.py
 !invapp.py
 !scripts/*.py
+*.csv
 
